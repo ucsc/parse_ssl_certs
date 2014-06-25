@@ -35,6 +35,7 @@ if not file_output or len(file_output) > 14:
   print "File too long [>14 char] or not given" % file_output
   exit(1)
 """
+
 file_input = "nexpose.csv"
 file_output = "results"
 usr_input = "csv"
@@ -43,9 +44,10 @@ csv_file = open(file_output+'.csv','wb')
 csv_write = csv.writer(csv_file, delimiter=',', quotechar='"',\
                         quoting=csv.QUOTE_ALL)
 csv_write.writerow(["File: %s" % file_input])
-csv_write.writerow(["IP","Hostname", "Alg", "Bits", "Cert Name","Org Name",\
-                    "State","Country","Cert Start", "Cert Expiration",\
-                     "Issuer", "MD5", "SHA1"])
+write_out = ["IP","Segment","Cert Before","Cert Expire","Issuer",\
+             "Orgname","Orgunit","City","State","Country","Email","Type",\
+             "BITS", "Selfsigned", "Valid Sig.","Errors", "Additional Cert Dates"]
+csv_write.writerow(write_out)
 
 if ("csv" in usr_input):
   for line in nmap_file:
@@ -98,8 +100,6 @@ if ("csv" in usr_input):
         elif "EMAILADDRESS=" in a:
           EMAIL = a.split('EMAILADDRESS=')[1]
 
-
-
       if (len(RE_AFTER.findall(part_line)) == 1 ):
         AFTER_RAW = ''.join(RE_AFTER.findall(part_line)).strip()
         AFTER = datetime.datetime.fromtimestamp(time.mktime(time.strptime\
@@ -109,6 +109,10 @@ if ("csv" in usr_input):
         BEFORE = datetime.datetime.fromtimestamp(time.mktime(time.strptime\
                  (BEFORE_RAW.strip(),"%d %b %Y %H:%M:%S %Z")))\
                   .strftime("%m/%d %Y").lstrip('0')
+        write_out = [IP, LOGICALSEG, BEFORE, AFTER, ISSUER, ORGNAME, ORGUNIT,\
+                     CITY, STATE, COUNTRY, EMAIL, TYPE, BITS, SELFSIGN, VALIDSIGN,\
+                     ERROR]
+        csv_write.writerow(write_out)
        
       else:
         IP = "*** " + IP + " ***" 
@@ -123,7 +127,14 @@ if ("csv" in usr_input):
                    (BEFORE_RAW[x].strip(),"%d %b %Y %H:%M:%S %Z")))\
                     .strftime("%m/%d %Y").lstrip('0')
           EXTRA += [BEFORE, AFTER]
-
+        write_out = [IP, LOGICALSEG, EXTRA[0], EXTRA[1], ISSUER, ORGNAME, ORGUNIT,\
+                     CITY, STATE, COUNTRY, EMAIL, TYPE, BITS, SELFSIGN, VALIDSIGN,\
+                     ERROR] + EXTRA[2:]
+        csv_write.writerow(write_out)
+       
+      
+      #this_host = [IP, HOSTNAME, TYPE, BITS, ORGNAME, ORGUNIT, STATE, COUNTRY,\
+      #            BEFORE, AFTER, ISSUER, MD5, SHA1]
 
       #    ## create list of list with order types indexed by for loop
         """
