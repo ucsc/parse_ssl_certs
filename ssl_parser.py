@@ -20,7 +20,7 @@ XXX org city [Not in cert]
 XXX contact name [Not in cert]
 """
 
-"""
+
 usr_input = raw_input("Please select the type of file to parse"\
                       " [nmap(raw)|csv(nexpose)]")
 if "nmap" not in usr_input or "csv" not in usr_input:
@@ -34,11 +34,8 @@ file_output = raw_input("Please enter the name of the output file [w/o suff].")
 if not file_output or len(file_output) > 14:
   print "File too long [>14 char] or not given" % file_output
   exit(1)
-"""
 
-file_input = "nexpose.csv"
 file_output = "results"
-usr_input = "csv"
 nmap_file = open(file_input,'r')
 csv_file = open(file_output+'.csv','wb')
 csv_write = csv.writer(csv_file, delimiter=',', quotechar='"',\
